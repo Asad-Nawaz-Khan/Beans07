@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><!---we connect any cdn in head -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet vue.js depot</title>
+     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body> <!--html only contains structure of app likeheading button,not variables ,variables are in vue instances in data-->
+    <!---Element where vue will mount-->
+    <div id="app"> <!-- U structure ur page in html and mount it and then render it with script used to make ur app-->
+        <header>
+            <h1 v-text="sitename"></h1> <!---V-text is added when u need to add text and datais added inside the vue instance inside data-->
+            <button v-on:click="showCheckout"> 
+                {{cartCount}} <!--Calling computed function-->
+                <!--This function is returning value so we call it in the mustache,and this can be used to run function -->
+                <span class="fa-solid fa-cart-plus"></span>Checkout <!--ICon-->
+            </button>
+        </header>
+        <!---- How to Display the Information in our App
+            blind:src used for images ,bind src attribute to product.image in data---->
+        <!-- Binding the image with its URL from the data
+ • Binding the other information to be displayed
+ • Notice the usage of the “Mustache
+ ” syntax {{ property-name }
+
+V-text for text
+v-html if there is a html element 
+v-bind:src for images 
+mustache for price -->
+
+
+        <main>
+            <div v-if="showProduct">
+         <figure>
+          
+            <img v-bind:src="product.image"> 
+
+            </figure>
+            <h2 v-text="product.title"></h2>
+            <p v-html = "product.description"></p> <!--Becuz this variable had html contents thats why we are renedring it as v-html and for normal text v-text -->
+            <p> price : {{product.price}} </p>
+            <p>Avaiable Stock : {{product.avaiableInventory - cartCount}}</p>
+            <button v-on:click="addToCart" v-if="canAddToCart">add to cart </button>  <!--Function addToCart being called--><!--V-if and V-else so if the v if condition is false ,v else condition and its function willl take place -->
+            <button disabled="disabled" v-else>add to cart</button> 
+            <!--If the canaddtocart is true the button apperars 
+                if not the button does not appear
+                we will have 2 similar buttons  one is enabled and other is disabled
+                we show the enabled button when user can add more products
+                and the other button when user cannot
+                we use v-if and v-elseto select which button is shown--->
+        </div>
+        <div v-else>
+            <h2>Checkout</h2>
+        </div>
+        </main>
+    </div>
+    <!--Making app,this is what displays and makes the app,html element is mounted here and data is transfered from here to html elements , we render them connect them by rendering it in html elements like v-text="sitename" and using sitename in "data" -->
+    <script type="text/javascript">
+        let webstore = new Vue({  //the Vue instance ,new mesans there is a consutor being their ,webstore is varaible.Vue Instanace and option object neew Vue ({option object goes here,}).The el option inside the option object is used to specify a document object model dOM element  where Vue will mount our application.   //Option object standard  {key1:value1,key2:value2,....}.Option objcts have serveral pre defined keys el to mount ,methods to make function,data tp add data to html elements.
+     
+            el: '#app',  //DOM, document object model mounting point , this links with the html element div with id app ,it puts the data in the div 
+            data:{ // whatever varaiables we have in Vue we add inside data. data conists varables that has data that already exists 
+                sitename:'Vue.js.pet.Depot',// "data:" is used to add data to html element mounted, data is stored in elements accourding to namess of Id ,V-text etc.
+                
+                showProduct:true,
+                
+                product:{  //array_name :{ key:value,key:value}
+                 id:1001,
+                 title:"Cat Food,25 lbBAg",
+                 description:"A 25 pound bag of <em> ireesistible</em>,"+"organic goodness for your cat",
+                 price:2000,
+                 image:"images/download.jpg ",
+                 //avaiableInventory:5,
+                 avaiableInventory:5,
+                 
+
+
+                 // to render data  we use  product.title,product.price in html elements etc.Rendering is like v-text="id_name" in html elemetns
+
+               
+                },
+                cart:[], //to store data we use a array in this case it stores item to cart when u click the add button,now we need to add "button"
+            },
+                methods:{
+            addToCart:function(){ //function name addToCart
+                 this.cart.push(this.product.id); //this means that when the button will be pushed the product id into cart array .
+                 //adding a product to cart means pushing a reference of product into cart array 
+                 
+                 //now data neeeds to go to checkout as next step, so wee need checkout page where we can display all our products /items 
+                
+                 
+                
+            },
+            showCheckout(){
+                this.showProduct=this.showProduct ? false:true;
+
+            },
+            //  //instead of using v-on you can replace it with @ symbol    
+          },
+          computed:{ //used to make function to return value of data we already have 
+                cartCount:function(){ //function name  
+                    //the value is returned/calculated when it is called 
+
+                    return this.cart.length ||"";
+              //The line ensures that the method always returns a value, either the number of items in the cart or an empty string if there are no items.
+              //It prevents undefined or null from being returned.
+              //this.cart refers to an array 
+              //.length is a property of arrays that returns the number of elements in the array.
+              //If this.cart contains 3 items, this.cart.length will return 3
+              //he || operator is used here to handle the scenario where this.cart.length is 0 or an empty value (undefined or null).
+              //If this.cart.length is a truthy value (non-zero), it will return the length.
+              //If this.cart.length is 0 (falsy), the empty string ("") will be returned instead.
+
+              //so when i press button ,product id moved into cart through function event and wahtever is pushed in cart is returned to checkout button becuz of comuted function which said return whatever is added in cart to checkout button
+              
+              
+
+                },
+                canAddToCart: function(){ // we are making sure that user only orders items that are aviavle in the inventory and not more than that 
+                    return this.product.avaiableInventory > this.cartCount; // this is condition 
+                }
+            }
+                
+         
+          
+        });
+    </script>
+    
+</body>
+
+<!--- Any CSS selector can be used to reference the mounting point: element, 
+class, ID, etc
+
+Id is used to makes html element unique.
+If we invoke the Vue constructor as new Vue({el: 'div' }), Vue would 
+mount at the first div element.
+ • If you need to run multiple Vue instances on a single page, you could 
+mount them to different DOM elements by using unique selectors
+
+MULTIPLE VUE INSTANCES ON ONE PAGE 
+<body>
+    <div id="app"></div>
+    <div id='app2'></div>
+    <div id='app3'></div>
+ <script>
+ let app1 = new Vue ({el: '#app1', ...})
+ let app2 = new Vue ({el: '#app2', ...})
+ let app3 = new Vue ({el: '#app3', ...})
+ </script>
+</body>
+
+
+connect cdn in <head>
+    html elemet <div id="app"> to be mounted in <body>, add the structure of page in this like <p>,<img>,<h1> etc,this will hold v-text,v-bind,v-html to connect this with option object inVue instance thats mounted to transfer data in "data object option"
+    <script> to make app and display things on it inside <body>
+    in this u make a new Vue instance ,mount html using el:id of element being mounted "#app"
+    this contains "data"through which data is transfered into html elements ,"write V-text name "like "sitename "  and add data,if u use array u will need torender data like arrayname.vaiablename in html element in v-text,like vtext=product.id
+-->
+</html>                                 
+
+
